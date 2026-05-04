@@ -1022,6 +1022,7 @@ static const char * GGML_OP_NAME[GGML_OP_COUNT] = {
     "MUL_MAT",
     "MUL_MAT_ID",
     "OUT_PROD",
+    "OUT_PROD_ID",
 
     "SCALE",
     "SET",
@@ -1133,6 +1134,7 @@ static const char * GGML_OP_SYMBOL[GGML_OP_COUNT] = {
     "X*Y",
     "X[i]*Y",
     "X*Y",
+    "X_id⊗Y_id",
 
     "x*v",
     "y-\\>view(x)",
@@ -3356,6 +3358,44 @@ struct ggml_tensor * ggml_out_prod(
     result->op     = GGML_OP_OUT_PROD;
     result->src[0] = a;
     result->src[1] = b;
+
+    return result;
+}
+
+// ggml_out_prod_id
+//
+// Scattered outer-product for the MUL_MAT_ID backward pass.
+//
+//   a:   [cols, n_expert_used, n_tokens]  F32  — activations (src1 of MUL_MAT_ID)
+//   b:   [rows, n_expert_used, n_tokens]  F32  — upstream gradient
+//   ids: [n_expert_used, n_tokens]        I32  — expert dispatch indices (src2 of MUL_MAT_ID)
+//   result: [cols, rows, n_expert, 1]     F32
+//
+//   result[:, :, e] += sum_{(i,t): ids[i,t]==e} a[:, i, t] ⊗ b[:, i, t]
+//
+// Computes the gradient w.r.t. the expert weight matrices (src0) of MUL_MAT_ID.
+struct ggml_tensor * ggml_out_prod_id(
+        struct ggml_context * ctx,
+        struct ggml_tensor  * a,
+        struct ggml_tensor  * b,
+        struct ggml_tensor  * ids,
+        int64_t               n_expert) {
+    GGML_ASSERT(a->type   == GGML_TYPE_F32);
+    GGML_ASSERT(b->type   == GGML_TYPE_F32);
+    GGML_ASSERT(ids->type == GGML_TYPE_I32);
+    GGML_ASSERT(a->ne[1]  == b->ne[1]);   // n_expert_used matches
+    GGML_ASSERT(a->ne[2]  == b->ne[2]);   // n_tokens matches
+    GGML_ASSERT(ids->ne[0] == a->ne[1]);  // n_expert_used matches ids
+    GGML_ASSERT(ids->ne[1] == a->ne[2]);  // n_tokens matches ids
+    GGML_ASSERT(n_expert > 0);
+
+    const int64_t ne[4] = { a->ne[0], b->ne[0], n_expert, 1 };
+    struct ggml_tensor * result = ggml_new_tensor(ctx, GGML_TYPE_F32, 4, ne);
+
+    result->op     = GGML_OP_OUT_PROD_ID;
+    result->src[0] = a;
+    result->src[1] = b;
+    result->src[2] = ids;
 
     return result;
 }

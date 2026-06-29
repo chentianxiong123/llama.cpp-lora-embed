@@ -3314,6 +3314,11 @@ void llama_context::opt_init(struct llama_model * model, struct llama_opt_params
     }
 }
 
+void llama_context::opt_reset(bool optimizer) {
+    GGML_ASSERT(opt_ctx);
+    ggml_opt_reset(opt_ctx, optimizer);
+}
+
 void llama_context::opt_epoch_iter(
         ggml_opt_dataset_t               dataset,
         ggml_opt_result_t                result,
@@ -3327,7 +3332,7 @@ void llama_context::opt_epoch_iter(
         int64_t                          ndata_in_loop,
         int64_t                          t_loop_start) {
     GGML_ASSERT(opt_ctx);
-    const uint32_t n_ctx    = llama_model_n_ctx_train(&model);
+    const uint32_t n_ctx    = (uint32_t)tokens.size();
     const uint32_t n_batch  = std::min(this->n_batch(),  n_ctx);
     const uint32_t n_ubatch = std::min(this->n_ubatch(), n_batch);
 
@@ -4189,6 +4194,10 @@ bool llama_opt_param_filter_all(const struct ggml_tensor * tensor, void * userda
 
 void llama_opt_init(struct llama_context * ctx, struct llama_model * model, struct llama_opt_params lopt_params) {
     ctx->opt_init(model, lopt_params);
+}
+
+void llama_opt_reset(struct llama_context * ctx, bool optimizer) {
+    ctx->opt_reset(optimizer);
 }
 
 void llama_opt_epoch(

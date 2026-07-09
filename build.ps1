@@ -11,7 +11,7 @@ Set-Location -LiteralPath "build"
 cmake .. `
   -G "Visual Studio 17 2022" `
   -DCMAKE_BUILD_TYPE=Release `
-  -DLLAMA_VULKAN=ON `
+  -DGGML_VULKAN=ON `
   -DLLAMA_BUILD_SERVER=ON `
   -DLLAMA_BUILD_EXAMPLES=ON `
   -DLLAMA_FATAL_WARNINGS=OFF `

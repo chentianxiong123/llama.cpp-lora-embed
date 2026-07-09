@@ -1,5 +1,9 @@
 # Build output
 build/
+cmake-build-*/
+out/
+dist/
+release/
 
 # IDE
 .vs/
@@ -7,7 +11,78 @@ build/
 .vscode/
 *.swp
 *.swo
+__pycache__/
+*.pyc
 
 # OS
 Thumbs.db
 .DS_Store
+
+# Binaries and generated artifacts
+*.exe
+*.dll
+*.lib
+*.pdb
+*.obj
+*.bin
+*.log
+
+# Models, adapters, and local inference assets
+*.gguf
+*.safetensors
+*.ckpt
+*.pth
+*.pt
+*.onnx
+models/
+adapters/
+loras/
+
+# Images/media must stay out of the repo
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.bmp
+*.gif
+*.tif
+*.tiff
+*.avif
+*.heic
+*.ico
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.flac
+
+# Local data and generated datasets
+data/
+raw/
+chat_records/
+workspace/
+outputs/
+runs/
+tmp/
+tmp_full/
+
+# Embeddings, databases, queues, and local reports
+*_vec.json
+*_embeddings.json
+*_embeddings.jsonl
+*.sqlite
+*.sqlite3
+*.db
+*.parquet
+*.arrow
+*.jsonl.tmp
+
+# Secrets and local overrides
+.env
+.env.*
+*.key
+*.pem
+*.token

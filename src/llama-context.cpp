@@ -3402,6 +3402,7 @@ void llama_context::opt_epoch_iter(
             res->reset();
 
             auto * gf = model.build_graph(gparams);
+            const int64_t t0_build = ggml_time_ms();
 
             // Allocate the tensor metadata context once, then reset it each iteration.
             // ggml_reset() is much cheaper than ggml_free()+ggml_init() — it just resets the

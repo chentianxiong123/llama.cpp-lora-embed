@@ -1,8 +1,20 @@
-# llama.cpp-lora-embed-rx580
+# llama.cpp-lora-embed
 
-**基于 llama.cpp 的 RX580/RX590 本地 LoRA + Embedding 工具分支**
+**基于 llama.cpp 的本地 LoRA + Embedding 工具分支**
 
-这个仓库是独立发行分支，不用于向上游 llama.cpp 合并。目标是保留 llama.cpp 主线能力，同时整理出适合 AMD RX580/RX590 级别本地机器使用的 LoRA、Q-LoRA 和 embedding/RAG 工作流。
+这个仓库是 llama.cpp 的独立发行分支，保留向上游同步的能力，但不以合并回官方主线为目标。它整理本地 LoRA、Q-LoRA、embedding/RAG 相关工作流，并保持对低成本 AMD RX580/RX590 级别机器的实际可用性。
+
+## 上下游关系
+
+```text
+ggerganov/llama.cpp
+        ↓ upstream sync
+chentianxiong123/llama.cpp-lora-embed
+        ↓ runtime dependency
+chentianxiong123/qwen-chat-rx580-lora-persona-agent
+```
+
+本仓库只负责底层推理、微调和 embedding 服务能力。上层人格模拟、聊天记录清洗、RAG 数据管线和 agent 逻辑放在 `qwen-chat-rx580-lora-persona-agent`。
 
 ## 用途
 
